@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lingsir</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <header class="bg-white border-b font-jakarta fixed h-20 w-full top-0 z-50">
+        <div class="container mx-auto py-4 px-10 flex items-center justify-between flex-wrap md:flex-nowrap">
+            <a href="/" class="flex items-center space-x-4">
+                <img src="../src/assets/Logo_Original.svg" alt="Logo" class="h-8 md:h-12" />
+                <div class="text-left">
+                    <span class="block font-bold">BADAN PUSAT STATISTIK</span>
+                    <span class="block font-bold">KABUPATEN TULUNGAGUNG</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4 mt-4 md:mt-0 relative z-50">
+                <button class="text-gray-800" @click="toggleSearch">
+                    <!-- <img src="../assets/search.svg" alt="Search" class="h-6 w-6" /> -->
+                </button>
+            </div>
+        </div>
+    </header>
+    <div class="container mx-auto flex flex-col items-center" x-data="websiteData()">
+        <div class="h-[calc(8vh)]"></div>
+        <div class="text-center">
+            <div class="container mx-auto flex flex-col items-center">
+                <h1 class="text-[4.5rem] font-bold my-5">
+                    <span :class="headingClass">Lingsir</span>
+                </h1>
+            </div>
+            <p class="text-black font-inter" :style="{ fontSize: '20px' }">
+                Lingsir atau Link n Share merupakan Sistem Informasi yang berisi kumpulan sistem informasi dan<br />
+                aplikasi yang digunakan oleh BPS Kabupaten Tulungagung untuk mempermudah dalam melakukan<br />
+                tugas dan tanggung jawab sebagai "Penyedia Data Statistik Berkualitas untuk Indonesia Maju".
+            </p>
+            <div div class="h-[calc(4vh)]"></div>
+        </div>
+        <div class="space-y-8 items-center container mx-auto">
+            <template x-for="team in teams" :key="team.name">
+                <div x-data="{open: false}"
+                    class="bg-blue-100 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 flex flex-col max-w-[861px] w-full mx-auto">
+                    <div @click="open = !open" class="flex justify-between items-center p-4 cursor-pointer">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-white flex items-center justify-center h-12 w-12 bg-primary-5/35 rounded-full">
+                                <img :src="team.image" alt="Team Icon" class="w-6 h-6 text-primary-1">
+                            </div>
+                            <h2 class="text-xl font-semibold" x-text="team.name"></h2>
+                        </div>
+                        <div class="h-[calc(4vh)]"></div>
+                    </div>
+                    <div x-show="open" x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 transform -translate-y-4"
+                        x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 transform translate-y-0"
+                        x-transition:leave-end="opacity-0 transform -translate-y-4" class="flex flex-col items-center overflow-hidden w-full">
+                        
+                        <div
+                            x-data="{ 
+                                currentPage: 1, 
+                                itemsPerPage: 9, 
+                                get totalPages() { return Math.ceil(this.websites.filter(website => website.team === team.name).length / this.itemsPerPage); }, 
+                                get paginatedWebsites() { const start = (this.currentPage - 1) * this.itemsPerPage; 
+                                    return this.websites.filter(website => website.team === team.name).slice(start, start + this.itemsPerPage); 
+                                }
+                            }">
+                            <div class="grid grid-cols-3 gap-y-10 gap-x-10 p-4 w-full justify-items-center text-center">
+                                <template x-for="website in paginatedWebsites">
+                                    <a :href="website.link" target="_blank" rel="noopener noreferrer"
+                                        class="text-center shadow-md hover:shadow-xl transition-shadow duration-200 flex flex-col items-center bg-blue-900 rounded-[40px] w-[228px] h-[160px]">
+                                        <div class="bg-white w-full min-h-20 rounded-t-[40px] content-center">
+                                            <img :src="website.image" :alt="website.name" class="px-4 max-h-20 max-w-[228px] rounded-t-[40px]">
+                                        </div>
+                                        <template x-if="website.name">
+                                            <h3 class="px-4 text-sm text-white font-semibold font-jakarta" :style="{ fontSize: '14px' }"
+                                                x-text="website.name"></h3>
+                                        </template>
+                                        <p class="content-center text-sm text-white mb-1 mx-3 bottom-0 font-jakarta h-full"
+                                            :style="{ fontSize: '12px' }" x-text="website.desc"></p>
+                                    </a>
+                                </template>
+                            </div>
+                            <template x-if="totalPages > 1">
+                                <div class="flex justify-between my-5 space-x-2">
+                                    <button @click="currentPage = Math.max(1, currentPage - 1)" :disabled="currentPage === 1" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Previous</button>
+                                    <span class="text-white">Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span></span>
+                                    <button @click="currentPage = Math.min(totalPages, currentPage + 1)" :disabled="currentPage === totalPages" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Next</button>
+                                </div>
+                            </template>
+                        </div>
+                        
+                    </div>
+                </div>
+            </template>
+        </div>
+    
+        <div class="h-[calc(4vh)]"></div>
+    </div>
+    <script>
+        function websiteData() {
+            return {
+                teams: [
+                    {
+                        name: 'Administrasi',
+                        image: '../src/assets/admin.png'
+                    },
+                    {
+                        name: 'Teknis dan Manajemen Kerja',
+                        image: '../src/assets/teknis.png'
+                    },
+                    {
+                        name: 'Sumber Daya Manusia',
+                        image: '../src/assets/sdm.png'
+                    },
+                    {
+                        name: 'Kehumasan',
+                        image: '../src/assets/humas.png'
+                    },
+                    {
+                        name: 'Pelayanan Statistik',
+                        image: '../src/assets/statistik.png'
+                    }
+                ],
+                websites: [
+                    {
+                        team: 'Administrasi',
+                        name: 'SIRUP',
+                        desc: 'Sistem Informasi Rencana Umum Pengadaan',
+                        image: '../src/assets/sirup.png',
+                        link: 'https://sirup.lkpp.go.id/sirup/loginctr/index'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'SAKTI',
+                        desc: 'Sistem Aplikasi Keuangan Tingkat Instansi',
+                        image: '../src/assets/admin.png',
+                        link: 'https://sakti.kemenkeu.go.id/LL-Zg7BviiuXviBn9TvfiA'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'E-MONEV',
+                        desc: 'Aplikasi Pelaporan e-Monev Bappenas',
+                        image: '../src/assets/admin.png',
+                        link: 'https://e-monev.bappenas.go.id/portal/'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'SPI',
+                        desc: 'Sistem Pengendalian Internal',
+                        image: '../src/assets/admin.png',
+                        link: 'https://sso.bps.go.id/'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'SMART',
+                        desc: 'Sistem Monitoring dan Evaluasi Kinerja Terpadu',
+                        image: '../src/assets/smart.png',
+                        link: 'https://monev.kemenkeu.go.id/'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'MonSakti',
+                        desc: 'Sistem Monitoring Keuangan Tingkat Instansi',
+                        image: '../src/assets/admin.png',
+                        link: 'https://monsakti.kemenkeu.go.id/'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'CMS BRI',
+                        desc: 'Sistem Pengelolaan Keuangan BRI',
+                        image: '../src/assets/admin.png',
+                        link: 'https://ibank.bri.co.id/cms/'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'KippApp',
+                        desc: 'Pengelolaan Kinerja ASN di Lingkungan Badan Pusat Statistik',
+                        image: '../src/assets/admin.png',
+                        link: 'https://webapps.bps.go.id/kipapp/#/auth/login'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'SIMISTIK',
+                        desc: 'Sistem Informasi Mitra Statistik',
+                        image: '../src/assets/admin.png',
+                        link: 'https://sites.google.com/view/simistik/beranda'
+                    },
+                    {
+                        team: 'Administrasi',
+                        name: 'Dummy',
+                        desc: 'Dummy Sistem Informasi Rencana Umum Pengadaan',
+                        image: '../src/assets/admin.png',
+                        link: 'https://sirup.lkpp.go.id/sirup/loginctr/index'
+                    },
+                    {
+                        team: 'Teknis dan Manajemen Kerja',
+                        name: 'WebMonitoring',
+                        desc: 'Sistem Monitoring Sensus dan Survei BPS RI',
+                        image: '../src/assets/teknis.png',
+                        link: 'https://internal.bps.go.id/'
+                    },
+                    {
+                        team: 'Teknis dan Manajemen Kerja',
+                        name: 'KSA BPS',
+                        desc: 'Sitem Monitoring Peramalan Luas Panen dengan Menggunakan Metode Kerangka Sampel Area',
+                        image: '../src/assets/teknis.png',
+                        link: 'https://ksa.bps.go.id/'
+                    },
+                    {
+                        team: 'Sumber Daya Manusia',
+                        name: 'e-LHKPN',
+                        desc: 'Laporan Harta Kekayaan Penyelenggara Negara',
+                        image: '../src/assets/sdm.png',
+                        link: 'https://elhkpn.kpk.go.id/portal/user/login'
+                    },
+                    {
+                        team: 'Sumber Daya Manusia',
+                        name: 'SPT/DJP-Online',
+                        desc: 'Layanan Pajak Online yang Disediakan oleh DJP',
+                        image: '../src/assets/humas.png',
+                        link: 'https://djponline.pajak.go.id/account/login'
+                    },
+                    {
+                        team: 'Sumber Daya Manusia',
+                        name: 'SOBAT BPS',
+                        desc: 'Aplikasi yang Digunakan untuk Petugas dan Calon Petugas Mitra BPS di Seluruh Indonesia',
+                        image: '../src/assets/statistik.png',
+                        link: 'https://mitra.bps.go.id/beranda'
+                    },
+                    {
+                        team: 'Kehumasan',
+                        name: '',
+                        desc: 'Laman Instagram BPS Kabupaten Tulungagung',
+                        image: '../src/assets/humas.png',
+                        link: 'https://djponline.pajak.go.id/account/login'
+                    },
+                    {
+                        team: 'Kehumasan',
+                        name: '',
+                        desc: 'Laman Facebook BPS Kabupaten Tulungagung',
+                        image: '../src/assets/humas.png',
+                        link: 'https://djponline.pajak.go.id/account/login'
+                    },
+                    {
+                        team: 'Kehumasan',
+                        name: '',
+                        desc: 'Berita Resmi Statistik BPS Kabupaten Tulungagung',
+                        image: '../src/assets/humas.png',
+                        link: 'https://djponline.pajak.go.id/account/login'
+                    },
+                    {
+                        team: 'Kehumasan',
+                        name: '',
+                        desc: 'Publikasi Data BPS Kabupaten Tulungagung',
+                        image: '../src/assets/humas.png',
+                        link: 'https://djponline.pajak.go.id/account/login'
+                    },
+                    {
+                        team: 'Kehumasan',
+                        name: '',
+                        desc: 'Link Foto Humas',
+                        image: '../src/assets/humas.png',
+                        link: 'https://djponline.pajak.go.id/account/login'
+                    },
+                    {
+                        team: 'Pelayanan Statistik',
+                        name: '',
+                        desc: 'Website Resmi BPS Kabupaten Tulungagung',
+                        image: '../src/assets/humas.png',
+                        link: 'https://djponline.pajak.go.id/account/login'
+                    },
+                    {
+                        team: 'Pelayanan Statistik',
+                        name: 'PST',
+                        desc: 'Pelayanan Statistik Terpadu BPS RI',
+                        image: '../src/assets/humas.png',
+                        link: 'https://djponline.pajak.go.id/account/login'
+                    }
+                ]
+            };
+        }
+    </script>
+</body>
+</html>
